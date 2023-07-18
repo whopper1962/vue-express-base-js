@@ -1,0 +1,54 @@
+version: "3.4"
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: vue-frontend-01
+    expose:
+      - "8888"
+    volumes:
+      - ./frontend:/frontend
+      - frontend-node_modules:/frontend/node_modules
+    tty: true
+    stdin_open: true
+    ports:
+      - "8888:8080"
+
+  backend:
+    container_name: express-backend-01
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/app
+      - backend-node_modules:/app/node_modules
+    environment:
+      APP_PORT: 3005
+      VUE_APP_ORIGIN: "http://localhost:8888"
+      DB_HOST: "database"
+      DB_PORT: 5437
+      DB_DIALECT: "postgres"
+      DB_DATABASE: "hello_world_db"
+      DB_USERNAME: "postgres"
+      DB_PASSWORD: "password"
+      APP_HOST: "0.0.0.0"
+    ports:
+      - 3005:3005
+    tty: true
+
+  database:
+    image: postgres:15
+    container_name: postgres-db-01
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hello_world_db
+      TZ: "Asia/Tokyo"
+    ports:
+      - 5437:5432
+
+volumes:
+  postgres_data:
+  frontend-node_modules:
+  backend-node_modules:
