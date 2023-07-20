@@ -20,8 +20,8 @@ export default {
       try {
         const response = await this.axios.get("/users");
         this.users = response.data;
-      } catch {
-        alert("Error!");
+      } catch (error) {
+        console.error(error);
       }
     },
   },

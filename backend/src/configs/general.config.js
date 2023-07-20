@@ -5,7 +5,7 @@ module.exports = {
     credentials: true,
     origin: process.env.VUE_APP_ORIGIN || "",
     methods: ["GET", "PUT", "POST", "PATCH", "DELETE", "HEAD","OPTIONS"],
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     preflightContinue: false,
     optionsSuccessStatus: 200,
   },

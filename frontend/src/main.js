@@ -18,20 +18,37 @@ const myAxios = axios.create({
 myAxios.interceptors.request.use((config) => {
   const { method, baseURL, url } = config;
   const fullUrl = `${baseURL}${url}`;
+  const accessToken = localStorage.getItem("accessToken");
+  config.headers = {
+    ...config.headers,
+    Authorization: `Bearer ${accessToken}`,
+  };
   console.log(`🚀 ${method?.toUpperCase()}: ${fullUrl} Request`, config);
   return config;
 });
 
-myAxios.interceptors.response.use((response) => {
-  const { method, baseURL, url } = response.config;
-  const { status } = response;
-  const fullUrl = `${baseURL}${url}`;
-  console.log(
-    `📬 ${method?.toUpperCase()}: ${fullUrl} Response(${status})`,
-    response
-  );
-  return response;
-});
+myAxios.interceptors.response.use(
+  (response) => {
+    const { method, baseURL, url } = response.config;
+    const { status } = response;
+    const fullUrl = `${baseURL}${url}`;
+    console.log(
+      `📬 ${method?.toUpperCase()}: ${fullUrl} Response(${status})`,
+      response
+    );
+    return response;
+  },
+  (error) => {
+    if (error.response.status === 401) {
+      alert("Your session has expired, please login again.");
+      localStorage.removeItem("accessToken");
+      router.push({
+        name: "loginView",
+      });
+    }
+    return Promise.reject(error);
+  }
+);
 
 Vue.prototype.axios = myAxios;
 
